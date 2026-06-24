@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:24-alpine
 
 # Tạo và thiết lập thư mục làm việc trong container
 WORKDIR /usr/src/app
