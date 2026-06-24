@@ -1,0 +1,38 @@
+name: Node.js CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        
+    - name: Install dependencies
+      # Sử dụng npm ci để cài đặt dependencies một cách sạch sẽ, dựa trên package-lock.json
+      run: npm ci
+      
+    - name: Run Linter
+      run: npm run lint
+
+  build-docker:
+    # Bước build docker này phụ thuộc vào bước lint. Chỉ khi lint thành công mới build.
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Build Docker Image
+      run: docker build -t acquisitions-app:latest .
